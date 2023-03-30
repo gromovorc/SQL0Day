@@ -1,9 +1,26 @@
-CREATE PROCEDURE usp_MakeFamilyPurchase
-	@FamilySurName varchar(255)
+CREATE PROCEDURE dbo.usp_MakeFamilyPurchase
+@FamilySurName varchar(255)
 AS
-UPDATE f 
-SET f.BudgetValue = f.BudgetValue - sum(b.Value)
-FROM Family as f
-	INNER JOIN dbo.Basket as b ON f.ID = b.ID_Family
-WHERE f.SurName = @FamilySurName
-	AND f.ID = b.ID_Family;
+BEGIN
+  SET NOCOUNT ON;
+
+  DECLARE @FamilyId int;
+
+  SELECT @FamilyId = ID
+  FROM dbo.Family
+  WHERE SurName = @FamilySurName;
+
+  IF @FamilyId IS NULL
+  BEGIN
+    RAISERROR('Семья с фамилией "%s" не найдена.', 16, 1, @FamilySurName);
+    RETURN;
+  END;
+
+  UPDATE dbo.Family
+  SET BudgetValue = BudgetValue - (
+    SELECT SUM(Value)
+    FROM dbo.Basket
+    WHERE ID_Family = @FamilyId
+  )
+  WHERE Id = @FamilyId;
+END;
