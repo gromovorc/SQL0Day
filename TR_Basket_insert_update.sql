@@ -1,4 +1,4 @@
-CREATE TRIGGER trg_CalculateDiscountValue
+CREATE TRIGGER TR_Basket_insert_update
 ON dbo.Basket
 AFTER INSERT
 AS
