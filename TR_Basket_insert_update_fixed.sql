@@ -17,5 +17,4 @@ ELSE 0
 END
 FROM dbo.Basket b
 JOIN cteCount c ON b.ID_SKU = c.ID_SKU
-WHERE b.ID IN (SELECT ID FROM inserted)
 END;
